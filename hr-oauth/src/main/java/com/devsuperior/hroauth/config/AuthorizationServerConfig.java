@@ -10,38 +10,37 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.jwk.JwkTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-	
+
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private JwtAccessTokenConverter accessTokenConverter;
-	
+
 	@Autowired
-	private JwkTokenStore tokenStore;
-	
+	private JwtTokenStore tokenStore;
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
 
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-		security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated");
+		security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
 	}
 
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory()
-			.withClient("myappname123")
-			.secret(passwordEncoder.encode("myappname123"))
-			.scopes("read","write")
-			.authorizedGrantTypes("password")
-			.accessTokenValiditySeconds(86400);
+		.withClient("myappname123")
+		.secret(passwordEncoder.encode("myappsecret123"))
+		.scopes("read", "write")
+		.authorizedGrantTypes("password")
+		.accessTokenValiditySeconds(86400);
 	}
 
 	@Override
@@ -50,5 +49,4 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		.tokenStore(tokenStore)
 		.accessTokenConverter(accessTokenConverter);
 	}
-
 }
